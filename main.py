@@ -33,9 +33,9 @@ def main():
         from test_huggingface_integration import main as test_main
         success = test_main()
         if success:
-            logger.info("✅ All tests passed!")
+            logger.info("All tests passed!")
         else:
-            logger.error("❌ Some tests failed!")
+            logger.error("Some tests failed!")
         return success
         
     elif args.mode == "demo":

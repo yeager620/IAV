@@ -57,11 +57,11 @@ def basic_model_loading_example():
         for key, value in info.items():
             logger.info(f"  {key}: {value}")
         
-        logger.info("✅ Model loading successful")
+        logger.info("Model loading successful")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Model loading failed: {e}")
+        logger.error(f"Model loading failed: {e}")
         return False
 
 
@@ -96,11 +96,11 @@ def simple_inference_example():
             action_names = ["vel_x", "vel_y", "vel_z", "roll_rate", "pitch_rate", "yaw_rate"]
             logger.info(f"  {action_names[i]}: {action:.4f} (confidence: {conf:.4f})")
         
-        logger.info("✅ Simple inference successful")
+        logger.info("Simple inference successful")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Simple inference failed: {e}")
+        logger.error(f"Simple inference failed: {e}")
         return False
 
 
@@ -174,11 +174,11 @@ def multi_command_example():
             logger.info(f"Expected: {scenario['expected_action']}")
             logger.info(f"Avg confidence: {conf.mean():.3f}")
         
-        logger.info("✅ Multi-command testing successful")
+        logger.info("Multi-command testing successful")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Multi-command testing failed: {e}")
+        logger.error(f"Multi-command testing failed: {e}")
         return False
 
 
@@ -236,11 +236,11 @@ def webcam_integration_example():
         logger.info(f"  Rotation: [{action[3]:.3f}, {action[4]:.3f}, {action[5]:.3f}] rad/s")
         logger.info(f"  Overall confidence: {confidence[0].mean():.3f}")
         
-        logger.info("✅ Webcam integration successful")
+        logger.info("Webcam integration successful")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Webcam integration failed: {e}")
+        logger.error(f"Webcam integration failed: {e}")
         return False
 
 
@@ -308,11 +308,11 @@ def drone_simulation_integration():
 
         drone.cleanup()
         
-        logger.info("✅ Drone simulation integration successful")
+        logger.info("Drone simulation integration successful")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Drone simulation integration failed: {e}")
+        logger.error(f"Drone simulation integration failed: {e}")
         return False
 
 
@@ -371,11 +371,11 @@ def performance_benchmark():
                 logger.info(f"  Peak GPU memory: {memory_mb:.1f} MB")
                 torch.cuda.reset_peak_memory_stats()
         
-        logger.info("✅ Performance benchmark successful")
+        logger.info("Performance benchmark successful")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Performance benchmark failed: {e}")
+        logger.error(f"Performance benchmark failed: {e}")
         return False
 
 
@@ -428,11 +428,11 @@ def autonomous_system_example():
 
         system.cleanup()
         
-        logger.info("✅ Autonomous system example successful")
+        logger.info("Autonomous system example successful")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Autonomous system example failed: {e}")
+        logger.error(f"Autonomous system example failed: {e}")
         return False
 
 
@@ -456,37 +456,37 @@ def main():
     results = []
     
     for name, example_func in examples:
-        logger.info(f"\n🔄 Running {name}...")
+        logger.info(f"\nRunning {name}...")
         try:
             success = example_func()
             results.append((name, success))
             if success:
-                logger.info(f"✅ {name} completed successfully")
+                logger.info(f"{name} completed successfully")
             else:
-                logger.error(f"❌ {name} failed")
+                logger.error(f"{name} failed")
         except Exception as e:
-            logger.error(f"❌ {name} failed with exception: {e}")
+            logger.error(f"{name} failed with exception: {e}")
             results.append((name, False))
     
 
     logger.info("\n" + "=" * 60)
-    logger.info("📊 HuggingFace Example Results:")
+    logger.info("HuggingFace Example Results:")
     
     successful = 0
     for name, success in results:
-        status = "✅ PASS" if success else "❌ FAIL"
+        status = "PASS" if success else "FAIL"
         logger.info(f"  {name}: {status}")
         if success:
             successful += 1
             
-    logger.info(f"\n🏆 {successful}/{len(results)} examples completed successfully")
+    logger.info(f"\n{successful}/{len(results)} examples completed successfully")
     
     if successful == len(results):
-        logger.info("🎉 All HuggingFace examples completed! Production system ready.")
+        logger.info("All HuggingFace examples completed! Production system ready.")
     else:
-        logger.warning("⚠️  Some examples failed. Check logs and environment setup.")
+        logger.warning("Some examples failed. Check logs and environment setup.")
     
-    logger.info("\n💡 Next steps:")
+    logger.info("\nNext steps:")
     logger.info("  - Fine-tune models with your drone data")
     logger.info("  - Integrate with real drone hardware")
     logger.info("  - Deploy in production environment")

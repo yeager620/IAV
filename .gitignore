@@ -62,6 +62,12 @@ checkpoints/
 *.h5
 weights/
 
+# Keep data directory structure but ignore contents
+!data/
+data/*
+!data/models/
+data/models/*
+
 # ML/AI Cache
 .cache/
 huggingface/

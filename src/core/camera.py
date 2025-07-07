@@ -189,8 +189,10 @@ class ImageProcessor:
 class ObjectDetector:
     def __init__(self, model_name: str = "yolov8n"):
         from ultralytics import YOLO
+        import os
         
-        self.model = YOLO(model_name)
+        model_path = os.path.join(os.path.dirname(__file__), "..", "..", "data", "models", f"{model_name}.pt")
+        self.model = YOLO(model_path)
         self.class_names = self.model.names
         
     def detect_objects(self, frame: np.ndarray, confidence_threshold: float = 0.5) -> List[dict]:

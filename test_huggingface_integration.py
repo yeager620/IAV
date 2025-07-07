@@ -50,11 +50,11 @@ def test_huggingface_encoder():
             features = encoder(video_frames)
             logger.info(f"Encoded features shape: {features.shape}")
             
-        logger.info("✅ HuggingFace VJEPA2 Encoder test passed")
+        logger.info("HuggingFace VJEPA2 Encoder test passed")
         return True
         
     except Exception as e:
-        logger.error(f"✗ HuggingFace VJEPA2 Encoder test failed: {e}")
+        logger.error(f"HuggingFace VJEPA2 Encoder test failed: {e}")
         return False
 
 
@@ -102,11 +102,11 @@ def test_drone_vla_model():
         info = model.get_model_info()
         logger.info(f"Model info: {info}")
             
-        logger.info("✅ HuggingFace Drone VLA Model test passed")
+        logger.info("HuggingFace Drone VLA Model test passed")
         return True
         
     except Exception as e:
-        logger.error(f"✗ HuggingFace Drone VLA Model test failed: {e}")
+        logger.error(f"HuggingFace Drone VLA Model test failed: {e}")
         return False
 
 
@@ -131,11 +131,11 @@ def test_quick_inference():
         logger.info(f"Quick inference - Actions: {actions}")
         logger.info(f"Quick inference - Confidence: {confidence}")
         
-        logger.info("✅ Quick Inference test passed")
+        logger.info("Quick Inference test passed")
         return True
         
     except Exception as e:
-        logger.error(f"✗ Quick Inference test failed: {e}")
+        logger.error(f"Quick Inference test failed: {e}")
         return False
 
 
@@ -183,11 +183,11 @@ def test_integration_with_drone_control():
 
         drone.cleanup()
         
-        logger.info("✅ Integration test passed")
+        logger.info("Integration test passed")
         return True
         
     except Exception as e:
-        logger.error(f"✗ Integration test failed: {e}")
+        logger.error(f"Integration test failed: {e}")
         return False
 
 
@@ -219,11 +219,11 @@ def test_different_model_sizes():
 
 
         
-        logger.info("✅ Model size test passed")
+        logger.info("Model size test passed")
         return True
         
     except Exception as e:
-        logger.error(f"✗ Model size test failed: {e}")
+        logger.error(f"Model size test failed: {e}")
         return False
 
 
@@ -268,11 +268,11 @@ def test_performance():
             memory_mb = torch.cuda.max_memory_allocated() / 1024 / 1024
             logger.info(f"Peak GPU memory: {memory_mb:.1f} MB")
         
-        logger.info("✅ Performance test passed")
+        logger.info("Performance test passed")
         return True
         
     except Exception as e:
-        logger.error(f"✗ Performance test failed: {e}")
+        logger.error(f"Performance test failed: {e}")
         return False
 
 
@@ -307,11 +307,11 @@ def test_autonomous_system():
 
         system.cleanup()
         
-        logger.info("✅ Autonomous system test passed")
+        logger.info("Autonomous system test passed")
         return True
         
     except Exception as e:
-        logger.error(f"✗ Autonomous system test failed: {e}")
+        logger.error(f"Autonomous system test failed: {e}")
         return False
 
 
@@ -343,12 +343,12 @@ def main():
     logger.info(f"\nTest Results: {passed}/{total} tests passed")
     
     if passed == total:
-        logger.info("🎉 All HuggingFace tests passed! Production system is ready.")
-        logger.info("💡 Next steps:")
+        logger.info("All HuggingFace tests passed! Production system is ready.")
+        logger.info("Next steps:")
         logger.info("  - Run: python main.py --mode demo")
         logger.info("  - Or: python examples/huggingface_basic_usage.py")
     else:
-        logger.warning(f"⚠️  {total - passed} tests failed. Check the logs above.")
+        logger.warning(f"{total - passed} tests failed. Check the logs above.")
         
     return passed == total
 
