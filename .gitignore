@@ -80,6 +80,15 @@ yolo/
 .uv/
 uv.lock
 
+# Pixi environment  
+max-project/
+.pixi/
+pixi.lock
+
+# Mojo compilation artifacts
+*.mojopkg
+*.pyc
+
 # Data files
 datasets/
 *.csv
