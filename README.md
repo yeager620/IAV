@@ -99,46 +99,46 @@ flowchart TD
 ```mermaid
 gantt
     title UAV System Process Lifecycle (Continuous Operation)
-    dateFormat X
-    axisFormat %s
+    dateFormat YYYY-MM-DD
+    axisFormat %H:%M:%S
     
     section System Initialization
-    Config Loading         :0, 1s
-    MAVLink Connection     :1s, 2s
-    Camera Initialization  :2s, 3s
-    Safety System Init     :3s, 4s
-    System Ready          :milestone, 4s
+    Config Loading         :2024-01-01, 1s
+    MAVLink Connection     :after Config Loading, 1s
+    Camera Initialization  :after MAVLink Connection, 1s
+    Safety System Init     :after Camera Initialization, 1s
+    System Ready          :milestone, after Safety System Init, 0s
     
     section Continuous Processes
-    Main Control Loop (100Hz)    :active, main_ctrl, 4s, 120s
-    Camera Capture (30Hz)        :active, camera, 4s, 120s
-    Drone Control (10Hz)         :active, drone_ctrl, 4s, 120s
-    Safety Monitor (10Hz)        :active, safety, 4s, 120s
+    Main Control Loop (100Hz)    :active, main_ctrl, after System Ready, 116s
+    Camera Capture (30Hz)        :active, camera, after System Ready, 116s
+    Drone Control (10Hz)         :active, drone_ctrl, after System Ready, 116s
+    Safety Monitor (10Hz)        :active, safety, after System Ready, 116s
     
     section Event-Driven Processes
-    User Command Processing      :crit, cmd1, 10s, 12s
-    VLA Model Inference         :crit, vla1, 11s, 13s
-    Mission Planning            :crit, mission1, 13s, 15s
+    User Command Processing      :crit, cmd1, after System Ready, 2s
+    VLA Model Inference         :crit, vla1, after cmd1, 2s
+    Mission Planning            :crit, mission1, after vla1, 2s
     
     section Autonomous Mode
-    Autonomous Loop (10Hz)      :active, auto_loop, 20s, 60s
-    Object Detection           :active, obj_detect, 20s, 60s
-    Action Generation          :active, action_gen, 20s, 60s
+    Autonomous Loop (10Hz)      :active, auto_loop, after mission1, 40s
+    Object Detection           :active, obj_detect, after mission1, 40s
+    Action Generation          :active, action_gen, after mission1, 40s
     
     section Emergency Scenarios
-    Emergency Detection        :crit, emergency1, 35s, 36s
-    Emergency Landing          :crit, landing1, 36s, 40s
-    System Recovery           :recovery1, 40s, 45s
+    Emergency Detection        :crit, emergency1, after auto_loop, 1s
+    Emergency Landing          :crit, landing1, after emergency1, 4s
+    System Recovery           :recovery1, after landing1, 5s
     
     section Second Mission Cycle
-    User Command 2            :crit, cmd2, 70s, 72s
-    VLA Inference 2           :crit, vla2, 71s, 73s
-    Mission Execution 2       :crit, mission2, 73s, 80s
+    User Command 2            :crit, cmd2, after recovery1, 2s
+    VLA Inference 2           :crit, vla2, after cmd2, 2s
+    Mission Execution 2       :crit, mission2, after vla2, 7s
     
     section Continuous Operation
-    Background Monitoring     :active, monitor, 4s, 120s
-    Telemetry Logging        :active, telemetry, 4s, 120s
-    Health Checks            :active, health, 4s, 120s
+    Background Monitoring     :active, monitor, after System Ready, 116s
+    Telemetry Logging        :active, telemetry, after System Ready, 116s
+    Health Checks            :active, health, after System Ready, 116s
 ```
 
 ### Process Interaction Timeline
