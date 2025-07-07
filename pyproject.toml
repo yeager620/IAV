@@ -1,0 +1,36 @@
+[project]
+name = "drone-vla"
+version = "0.1.0"
+description = "Vision-Language-Action system for autonomous drone control using Meta's VJEPA2"
+authors = [
+    {name = "Drone VLA Contributors"}
+]
+license = {text = "MIT"}
+keywords = ["drone", "robotics", "vision-language-action", "vjepa2", "autonomous", "uav"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Robotics",
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "opencv-python>=4.8.0",
+    "transformers>=4.52.0", 
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "numpy>=1.24.0",
+    "pillow>=9.5.0",
+    "dronekit>=2.9.2",
+    "pymavlink>=2.4.37",
+    "ultralytics>=8.0.0",
+    "sentence-transformers>=2.2.0",
+    "accelerate>=0.20.0",
+    "huggingface-hub>=0.16.0",
+]
+
