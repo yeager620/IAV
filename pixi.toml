@@ -1,11 +1,51 @@
 [project]
-authors = ["Evan Yeager <4135yeagers@gmail.com>"]
-channels = ["https://conda.modular.com/max-nightly", "https://conda.modular.com/max", "https://repo.prefix.dev/modular-community", "conda-forge"]
-name = "drone-vla-mojo"
-platforms = ["osx-arm64"]
+name = "drone-vla"
+authors = ["Evan Yeager <yeager@berkeley.edu>"]
+channels = ["https://conda.modular.com/max-nightly", "https://conda.modular.com/max", "conda-forge"]
+platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
+description = "Vision-Language-Action system for autonomous drone control"
 
 [tasks]
+# Build tasks
+build = "bash scripts/build.sh"
+test = "bash scripts/test.sh"
+dev = "python main.py --simulation"
+
+# Development tasks  
+format = "ruff format ."
+lint = "ruff check ."
+type-check = "mypy src/"
 
 [dependencies]
+# Mojo/MAX
 max = ">=25.5.0.dev2025070705,<26"
+
+# Python core
+python = ">=3.13"
+numpy = ">=1.24.0"
+opencv = ">=4.8.0"
+
+# Note: pymavlink and dronekit moved to pypi-dependencies
+
+# Testing
+pytest = ">=8.4.1"
+pytest-asyncio = ">=1.0.0"
+
+# Development tools
+ruff = "*"
+mypy = "*"
+
+[pypi-dependencies]
+# Drone/Robotics (PyPI only)
+pymavlink = ">=2.4.37"
+dronekit = ">=2.9.2"
+
+# ML/AI packages (PyPI only)
+transformers = ">=4.52.0"
+torch = ">=2.0.0"
+torchvision = ">=0.15.0"
+ultralytics = ">=8.0.0"
+sentence-transformers = ">=2.2.0"
+accelerate = ">=0.20.0"
+huggingface-hub = ">=0.16.0"

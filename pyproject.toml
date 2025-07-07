@@ -1,12 +1,13 @@
 [project]
 name = "drone-vla"
 version = "0.1.0"
-description = "Vision-Language-Action system for autonomous drone control using Meta's VJEPA2"
+description = "Vision-Language-Action system for autonomous drone control"
 authors = [
-    {name = "Drone VLA Contributors"}
+    {name = "Evan Yeager", email = "yeager@berkeley.edu"}
 ]
 license = {text = "MIT"}
-keywords = ["drone", "robotics", "vision-language-action", "vjepa2", "autonomous", "uav"]
+requires-python = ">=3.13"
+keywords = ["drone", "robotics", "vision-language-action", "autonomous", "uav"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -15,24 +16,63 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Scientific/Engineering :: Robotics",
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+
 dependencies = [
-    "opencv-python>=4.8.0",
-    "transformers>=4.52.0",
-    "torch>=2.0.0",
-    "torchvision>=0.15.0",
+    # Core
     "numpy>=1.24.0",
-    "pillow>=9.5.0",
-    "dronekit>=2.9.2",
+    "opencv-python>=4.8.0",
+    
+    # Drone/Robotics  
     "pymavlink>=2.4.37",
-    "ultralytics>=8.0.0",
-    "sentence-transformers>=2.2.0",
-    "accelerate>=0.20.0",
-    "huggingface-hub>=0.16.0",
+    "dronekit>=2.9.2",
+    
+    # Testing
     "pytest>=8.4.1",
     "pytest-asyncio>=1.0.0",
 ]
 
+[project.optional-dependencies]
+# ML features (optional since we use Mojo for performance)
+ml = [
+    "torch>=2.0.0",
+    "torchvision>=0.15.0", 
+    "transformers>=4.52.0",
+    "ultralytics>=8.0.0",
+    "sentence-transformers>=2.2.0",
+    "accelerate>=0.20.0",
+    "huggingface-hub>=0.16.0",
+]
+
+# Development tools
+dev = [
+    "ruff",
+    "mypy", 
+    "pre-commit",
+]
+
+[project.scripts]
+drone-vla = "main:main"
+
+[tool.uv]
+dev-dependencies = [
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
