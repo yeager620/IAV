@@ -1,0 +1,11 @@
+[workspace]
+authors = ["Evan Yeager <4135yeagers@gmail.com>"]
+channels = ["https://conda.modular.com/max-nightly", "conda-forge"]
+name = "max-project"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+modular = ">=25.5.0.dev2025070705,<26"
