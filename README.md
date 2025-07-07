@@ -28,6 +28,72 @@ Hardware I/O (Python) ; Mojo Core ; Hardware I/O (Python)
   Commands             + Control       
 ```
 
+### System Components Flowchart
+
+```mermaid
+flowchart TD
+    %% Input Layer
+    CAM[Camera System<br/>YOLOv8 Object Detection]
+    CMD[Natural Language<br/>Commands]
+    MAV[MAVLink Interface<br/>Flight Controller]
+    
+    %% AI/ML Layer
+    VLA[VLA Model<br/>Vision-Language-Action<br/>VJEPA2 Neural Network]
+    
+    %% Processing Layer
+    VISION[Vision System<br/>Frame Processing<br/>Object Actions]
+    SAFETY[Safety Monitor<br/>Command Validation<br/>Constraint Enforcement]
+    AUTON[Autonomous System<br/>Mission Planning<br/>State Management]
+    
+    %% Control Layer
+    CTRL[Flight Controller<br/>DroneController Class<br/>6DOF Control]
+    MOJO_CORE[Mojo Core<br/>Performance-Critical<br/>Control Logic]
+    MOJO_UAV[UAV Core Functions<br/>Motor Mixing<br/>Control Allocation]
+    
+    %% Output Layer
+    MOTORS[Motor Commands<br/>Quadcopter Control]
+    
+    %% High-Performance Bridges
+    CAM_BRIDGE[Camera Bridge<br/>Mojo]
+    NET_BRIDGE[Network Bridge<br/>Mojo]
+    
+    %% Data Flow
+    CAM --> CAM_BRIDGE
+    CAM_BRIDGE --> VISION
+    CMD --> VLA
+    VISION --> VLA
+    VLA --> AUTON
+    AUTON --> SAFETY
+    SAFETY --> CTRL
+    CTRL --> MOJO_CORE
+    MOJO_CORE --> MOJO_UAV
+    MOJO_UAV --> MOTORS
+    
+    MAV --> NET_BRIDGE
+    NET_BRIDGE --> CTRL
+    CTRL --> NET_BRIDGE
+    NET_BRIDGE --> MAV
+    
+    %% Safety Override
+    SAFETY -.-> MOTORS
+    SAFETY -.-> MAV
+    
+    %% Styling
+    classDef input fill:#e1f5fe
+    classDef ai fill:#f3e5f5
+    classDef processing fill:#fff3e0
+    classDef control fill:#e8f5e8
+    classDef output fill:#ffebee
+    classDef mojo fill:#fff8e1
+    
+    class CAM,CMD,MAV input
+    class VLA ai
+    class VISION,SAFETY,AUTON processing
+    class CTRL control
+    class MOTORS output
+    class MOJO_CORE,MOJO_UAV,CAM_BRIDGE,NET_BRIDGE mojo
+```
+
 ### Core Components
 
 - **Mojo Core**: Performance-critical flight control, safety monitoring, and VLA inference
