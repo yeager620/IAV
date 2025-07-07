@@ -25,7 +25,7 @@ def setup_logging(level: str = "INFO"):
 
 async def main():
     parser = argparse.ArgumentParser(description="UAV VLA System")
-    parser.add_argument("--config", default="config/system_config.json", help="Configuration file")
+    parser.add_argument("--config", default="config/minimal_config.json", help="Configuration file")
     parser.add_argument("--simulation", action="store_true", help="Use simulation connection")
     parser.add_argument("--command", help="Single command to execute")
     parser.add_argument("--log-level", default="INFO", help="Logging level")

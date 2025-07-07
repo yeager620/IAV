@@ -58,8 +58,7 @@ fn normalize_angle(angle: Float64) -> Float64:
         normalized += 2.0 * math.pi
     return normalized
 
-fn compute_control_effort(error: Float64, kp: Float64, ki: Float64, kd: Float64, 
-                         integral: Float64, derivative: Float64) -> Float64:
+fn compute_control_effort(error: Float64, kp: Float64, ki: Float64, kd: Float64, integral: Float64, derivative: Float64) -> Float64:
     """Compute PID control effort."""
     return kp * error + ki * integral + kd * derivative
 
