@@ -14,7 +14,7 @@ Building an intelligent, robust, and lightweight aerial vehicle with the ability
 
 ### Internal development-related goals:
 
-- **Streamlined development and deployment cycle:** package / environment management, automated workflows, version control, unit / integration testing, containerization and deployment
+- **Streamlined development and deployment cycle:** package / environment management, automated workflows, version control, pre / post training pipelines, unit / integration testing, containerization and deployment
 - **Flexible, modular, extensible APIs**
 - **Ability to iterate, prototype, and test quickly**
 - **Precise and correct program specifications:** 
