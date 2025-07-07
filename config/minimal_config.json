@@ -1,0 +1,18 @@
+{
+  "mavlink": {
+    "connection": "/dev/ttyUSB0",
+    "baud_rate": 921600
+  },
+  "camera_id": 0,
+  "control_frequency": 100,
+  "safety": {
+    "max_velocity": 5.0,
+    "max_angular_rate": 2.0,
+    "min_altitude": 0.5,
+    "max_altitude": 100.0
+  },
+  "control": {
+    "arm_length": 0.225,
+    "thrust_to_torque_ratio": 0.05
+  }
+}
