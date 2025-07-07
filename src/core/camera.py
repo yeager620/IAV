@@ -28,7 +28,7 @@ class CameraInput:
         self.frame_id = 0
         self.capture_thread = None
         
-        # Camera calibration parameters (to be calibrated)
+
         self.camera_matrix = None
         self.dist_coeffs = None
         
@@ -40,12 +40,12 @@ class CameraInput:
             if not self.cap.isOpened():
                 return False
                 
-            # Set camera properties
+
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.resolution[0])
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution[1])
             self.cap.set(cv2.CAP_PROP_FPS, self.fps)
             
-            # Test frame capture
+
             ret, frame = self.cap.read()
             if not ret:
                 return False
@@ -80,7 +80,7 @@ class CameraInput:
                 if not ret:
                     continue
                     
-                # Create camera frame
+
                 camera_frame = CameraFrame(
                     image=frame,
                     timestamp=time.time(),
@@ -90,11 +90,11 @@ class CameraInput:
                 
                 self.frame_id += 1
                 
-                # Add to queue (non-blocking)
+
                 try:
                     self.frame_queue.put(camera_frame, block=False)
                 except queue.Full:
-                    # Remove oldest frame if queue is full
+
                     try:
                         self.frame_queue.get_nowait()
                         self.frame_queue.put(camera_frame, block=False)
@@ -130,7 +130,7 @@ class ImageProcessor:
     def __init__(self, target_size: Tuple[int, int] = (224, 224)):
         self.target_size = target_size
         
-        # Standard transforms for neural networks
+
         self.transforms = transforms.Compose([
             transforms.ToPILImage(),
             transforms.Resize(target_size),
@@ -139,7 +139,7 @@ class ImageProcessor:
                                std=[0.229, 0.224, 0.225])
         ])
         
-        # Transforms without normalization for visualization
+
         self.viz_transforms = transforms.Compose([
             transforms.ToPILImage(),
             transforms.Resize(target_size),
@@ -148,10 +148,10 @@ class ImageProcessor:
         
     def preprocess_frame(self, frame: np.ndarray, normalize: bool = True) -> torch.Tensor:
         """Preprocess frame for neural network input"""
-        # Convert BGR to RGB
+
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         
-        # Apply transforms
+
         if normalize:
             tensor = self.transforms(rgb_frame)
         else:
@@ -170,17 +170,17 @@ class ImageProcessor:
         
     def postprocess_output(self, tensor: torch.Tensor) -> np.ndarray:
         """Convert tensor back to displayable image"""
-        # Denormalize
+
         denorm = tensor.clone()
         denorm = denorm * torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
         denorm = denorm + torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
         
-        # Convert to numpy
+
         denorm = torch.clamp(denorm, 0, 1)
         np_img = denorm.permute(1, 2, 0).numpy()
         np_img = (np_img * 255).astype(np.uint8)
         
-        # Convert RGB to BGR for OpenCV
+
         bgr_img = cv2.cvtColor(np_img, cv2.COLOR_RGB2BGR)
         
         return bgr_img
@@ -233,10 +233,10 @@ class ObjectDetector:
             
             x1, y1, x2, y2 = map(int, bbox)
             
-            # Draw bounding box
+
             cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
             
-            # Draw label
+
             label = f"{class_name}: {confidence:.2f}"
             label_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)[0]
             cv2.rectangle(annotated_frame, (x1, y1 - label_size[1] - 10), 
@@ -274,7 +274,7 @@ class VisionSystem:
         if camera_frame is None:
             return None
             
-        # Preprocess for neural network
+
         processed_tensor = self.processor.preprocess_frame(camera_frame.image)
         
         return processed_tensor, camera_frame.image
@@ -287,7 +287,7 @@ class VisionSystem:
             
         processed_tensor, raw_frame = result
         
-        # Detect objects
+
         detections = self.detector.detect_objects(raw_frame)
         
         return processed_tensor, detections, raw_frame

@@ -65,21 +65,21 @@ class AutonomousDroneSystem:
         self.safety_level = safety_level
         self.simulation_mode = simulation_mode
         
-        # System components
+
         self.vla_model = None
         self.drone_controller = None
         self.vision_system = None
         self.safety_monitor = None
         self.vision_integrator = None
         
-        # System state
+
         self.state = SystemState.OFFLINE
         self.emergency_callbacks = []
         self.running = False
         self.autonomous_thread = None
         self.current_mission = None
         
-        # Mission tracking
+
         self.mission_queue = []
         self.mission_history = []
         
@@ -91,31 +91,31 @@ class AutonomousDroneSystem:
             self.state = SystemState.INITIALIZING
             logger.info("Initializing autonomous drone system...")
             
-            # Load VLA model
+
             logger.info("Loading VLA model...")
             self.vla_model = create_drone_vla_model(
                 model_size=self.model_size,
                 freeze_backbone=True
             )
             
-            # Initialize drone controller
+
             logger.info("Initializing drone controller...")
             self.drone_controller = DroneController(simulation_mode=self.simulation_mode)
             if not self.drone_controller.connect():
                 raise Exception("Failed to connect to drone")
             self.drone_controller.start_control_loop()
             
-            # Initialize vision system
+
             logger.info("Initializing vision system...")
             self.vision_system = VisionSystem()
             if not self.vision_system.initialize():
                 logger.warning("Vision system initialization failed, using dummy frames")
             
-            # Initialize safety monitor
+
             logger.info("Initializing safety monitor...")
             self.safety_monitor = SafetyMonitor(SafetyLevel(self.safety_level))
             
-            # Initialize vision-action integrator
+
             logger.info("Initializing vision-action integrator...")
             self.vision_integrator = VisionActionIntegrator(
                 self.vla_model,
@@ -140,7 +140,7 @@ class AutonomousDroneSystem:
         self.state = SystemState.AUTONOMOUS
         self.running = True
         
-        # Start autonomous control thread
+
         self.autonomous_thread = threading.Thread(target=self._autonomous_loop)
         self.autonomous_thread.daemon = True
         self.autonomous_thread.start()
@@ -165,11 +165,11 @@ class AutonomousDroneSystem:
         self.state = SystemState.EMERGENCY
         self.safety_monitor.activate_emergency_stop()
         
-        # Stop all movement
+
         emergency_action = np.zeros(6)
         self.drone_controller.execute_action_vector(emergency_action)
         
-        # Execute emergency callbacks
+
         for callback in self.emergency_callbacks:
             try:
                 callback()
@@ -187,13 +187,13 @@ class AutonomousDroneSystem:
             return False
             
         try:
-            # Get current video frames
+
             frames = self._get_current_frames()
             if not frames:
                 logger.error("Failed to get video frames")
                 return False
                 
-            # Get current drone state
+
             drone_status = self.drone_controller.get_status()
             current_state = {
                 'altitude': drone_status.position[2],
@@ -201,16 +201,16 @@ class AutonomousDroneSystem:
                 'position': drone_status.position
             }
             
-            # Process with vision-action integrator
+
             result = self.vision_integrator.process_frame_with_objects(
                 frames, command, detection_threshold=0.5
             )
             
-            # Validate with safety monitor
+
             safety_result = self.safety_monitor.validate_and_filter(
                 command=command,
                 action=result['final_action'],
-                confidence=np.ones(6),  # Placeholder confidence
+                confidence=np.ones(6),
                 current_state=current_state
             )
             
@@ -218,10 +218,10 @@ class AutonomousDroneSystem:
                 logger.warning(f"Command blocked: {safety_result['blocked_reason']}")
                 return False
                 
-            # Execute safe action
+
             self.drone_controller.execute_action_vector(safety_result['safe_action'])
             
-            # Log execution
+
             logger.info(f"Executed command: '{command}'")
             if safety_result['warnings']:
                 logger.warning(f"Warnings: {safety_result['warnings']}")
@@ -260,10 +260,10 @@ class AutonomousDroneSystem:
                 elif step.failure_action == "continue":
                     logger.warning("Continuing mission despite failure")
                     
-            # Wait for step completion
+
             time.sleep(2.0)
             
-        # Record mission result
+
         self.mission_history.append({
             'mission_id': self.current_mission,
             'steps': mission_steps,
@@ -279,7 +279,7 @@ class AutonomousDroneSystem:
         """Get current system status"""
         errors = []
         
-        # Check component status
+
         drone_connected = (self.drone_controller is not None and 
                           self.drone_controller.get_status().state != "disconnected")
         
@@ -290,7 +290,7 @@ class AutonomousDroneSystem:
         safety_active = (self.safety_monitor is not None and 
                         not self.safety_monitor.emergency_stop)
         
-        # Collect any errors
+
         if not drone_connected:
             errors.append("Drone not connected")
         if not camera_active:
@@ -315,17 +315,17 @@ class AutonomousDroneSystem:
         
         while self.running and self.state == SystemState.AUTONOMOUS:
             try:
-                # Process mission queue
+
                 if self.mission_queue:
                     mission = self.mission_queue.pop(0)
                     self.execute_mission(mission)
                     
-                # Regular status check
+
                 status = self.get_status()
                 if status.errors:
                     logger.warning(f"System warnings: {status.errors}")
                     
-                time.sleep(0.1)  # 10Hz control loop
+                time.sleep(0.1)
                 
             except Exception as e:
                 logger.error(f"Error in autonomous loop: {e}")
@@ -349,7 +349,7 @@ class AutonomousDroneSystem:
             except Exception as e:
                 logger.warning(f"Failed to get frames from vision system: {e}")
                 
-        # Fallback to dummy frames if needed
+
         if len(frames) < num_frames:
             dummy_frames_needed = num_frames - len(frames)
             for _ in range(dummy_frames_needed):

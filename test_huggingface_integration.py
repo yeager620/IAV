@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 Test script for HuggingFace VJEPA2 integration (PRIMARY APPROACH)
 This tests the production-ready HuggingFace implementation.
@@ -11,7 +11,7 @@ import cv2
 import logging
 from pathlib import Path
 
-# Setup logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -19,11 +19,11 @@ def create_dummy_video_frames(num_frames: int = 16, height: int = 256, width: in
     """Create dummy video frames for testing"""
     frames = []
     for i in range(num_frames):
-        # Create a simple test pattern
+
         frame = np.zeros((height, width, 3), dtype=np.uint8)
-        frame[:, :, 0] = (i * 255 // num_frames)  # Red channel varies with frame
-        frame[height//4:3*height//4, width//4:3*width//4, 1] = 255  # Green square
-        frame[height//3:2*height//3, width//3:2*width//3, 2] = 128  # Blue square
+        frame[:, :, 0] = (i * 255 // num_frames)
+        frame[height//4:3*height//4, width//4:3*width//4, 1] = 255
+        frame[height//3:2*height//3, width//3:2*width//3, 2] = 128
         frames.append(frame)
     return frames
 
@@ -35,17 +35,17 @@ def test_huggingface_encoder():
     try:
         from src.models.huggingface.vla_model import HuggingFaceVJEPA2Encoder
         
-        # Test basic encoder
+
         encoder = HuggingFaceVJEPA2Encoder(
             model_name="facebook/vjepa2-vitl-fpc64-256",
             freeze_backbone=True,
             output_dim=512
         )
         
-        # Create dummy video frames
+
         video_frames = create_dummy_video_frames(16)
         
-        # Test forward pass
+
         with torch.no_grad():
             features = encoder(video_frames)
             logger.info(f"Encoded features shape: {features.shape}")
@@ -65,7 +65,7 @@ def test_drone_vla_model():
     try:
         from src.models.huggingface.vla_model import create_drone_vla_model
         
-        # Create model
+
         model = create_drone_vla_model(
             model_size="large",
             freeze_backbone=True,
@@ -73,11 +73,11 @@ def test_drone_vla_model():
             action_dim=6
         )
         
-        # Create test data
+
         video_frames = create_dummy_video_frames(16)
         text_command = "Take off and hover at 5 meters"
         
-        # Test forward pass
+
         with torch.no_grad():
             output = model(
                 frames=video_frames,
@@ -88,7 +88,7 @@ def test_drone_vla_model():
             logger.info(f"Action confidence shape: {output.action_confidence.shape}")
             logger.info(f"Features shape: {output.features.shape}")
             
-        # Test action prediction
+
         with torch.no_grad():
             actions, confidence = model.predict_action(
                 frames=video_frames,
@@ -98,7 +98,7 @@ def test_drone_vla_model():
             logger.info(f"Predicted action: {actions[0]}")
             logger.info(f"Action confidence: {confidence[0]}")
             
-        # Test model info
+
         info = model.get_model_info()
         logger.info(f"Model info: {info}")
             
@@ -117,11 +117,11 @@ def test_quick_inference():
     try:
         from src.models.huggingface.vla_model import quick_inference
         
-        # Create test data
-        video_frames = create_dummy_video_frames(8)  # Shorter for quick test
+
+        video_frames = create_dummy_video_frames(8)
         text_command = "Move forward slowly"
         
-        # Test quick inference
+
         actions, confidence = quick_inference(
             frames=video_frames,
             text_command=text_command,
@@ -147,23 +147,23 @@ def test_integration_with_drone_control():
         from src.models.huggingface.vla_model import create_drone_vla_model
         from src.core.drone_control import DroneController
         
-        # Create model
+
         model = create_drone_vla_model(
             model_size="large",
             freeze_backbone=True,
-            feature_dim=256  # Smaller for faster testing
+            feature_dim=256
         )
         
-        # Create drone controller in simulation mode
+
         drone = DroneController(simulation_mode=True)
         drone.connect()
         drone.start_control_loop()
         
-        # Create test scenario
+
         video_frames = create_dummy_video_frames(8)
         text_command = "Take off to 3 meters"
         
-        # Get model prediction
+
         with torch.no_grad():
             actions, confidence = model.predict_action(
                 frames=video_frames,
@@ -171,16 +171,16 @@ def test_integration_with_drone_control():
                 deterministic=True
             )
             
-        # Execute action on drone
+
         action_np = actions[0]
         drone.execute_action_vector(action_np)
         
-        # Check drone status
+
         status = drone.get_status()
         logger.info(f"Drone state: {status.state}")
         logger.info(f"Drone position: {status.position}")
         
-        # Cleanup
+
         drone.cleanup()
         
         logger.info("✅ Integration test passed")
@@ -198,11 +198,11 @@ def test_different_model_sizes():
     try:
         from src.models.huggingface.vla_model import create_drone_vla_model
         
-        # Test data
-        video_frames = create_dummy_video_frames(4)  # Very short for quick test
+
+        video_frames = create_dummy_video_frames(4)
         text_command = "Test command"
         
-        # Test large model (default)
+
         logger.info("Testing Large model...")
         model_large = create_drone_vla_model(model_size="large", feature_dim=256)
         
@@ -210,14 +210,14 @@ def test_different_model_sizes():
             actions_large, _ = model_large.predict_action(video_frames, text_command)
             logger.info(f"Large model action: {actions_large[0]}")
         
-        # Note: Huge and Giant models require more memory and time
-        # Uncomment if you have sufficient resources:
+
+
         
-        # logger.info("Testing Huge model...")
-        # model_huge = create_drone_vla_model(model_size="huge", feature_dim=256)
-        # with torch.no_grad():
-        #     actions_huge, _ = model_huge.predict_action(video_frames, text_command)
-        #     logger.info(f"Huge model action: {actions_huge[0]}")
+
+
+
+
+
         
         logger.info("✅ Model size test passed")
         return True
@@ -235,20 +235,20 @@ def test_performance():
         from src.models.huggingface.vla_model import create_drone_vla_model
         import time
         
-        # Create model
+
         model = create_drone_vla_model(model_size="large", feature_dim=256)
         model.eval()
         
-        # Test data
+
         video_frames = create_dummy_video_frames(8)
         text_command = "Performance test"
         
-        # Warmup
+
         for _ in range(3):
             with torch.no_grad():
                 model.predict_action(video_frames, text_command)
         
-        # Benchmark
+
         num_iterations = 5
         start_time = time.time()
         
@@ -283,28 +283,28 @@ def test_autonomous_system():
     try:
         from src.core.autonomous_system import create_autonomous_system, MissionStep
         
-        # Create system
+
         system = create_autonomous_system(
             model_size="large",
-            safety_level="strict",  # Use strict for testing
+            safety_level="strict",
             simulation_mode=True
         )
         
-        # Test initialization
+
         success = system.initialize()
         if not success:
             logger.error("System initialization failed")
             return False
             
-        # Test status
+
         status = system.get_status()
         logger.info(f"System status: {status.state}")
         
-        # Test single command
+
         cmd_success = system.execute_command("Test hover command", timeout=5.0)
         logger.info(f"Command execution: {cmd_success}")
         
-        # Cleanup
+
         system.cleanup()
         
         logger.info("✅ Autonomous system test passed")

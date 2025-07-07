@@ -14,22 +14,22 @@ logger = logging.getLogger(__name__)
 
 class SafetyLevel(Enum):
     """Safety levels for different operational modes"""
-    STRICT = "strict"      # Maximum safety, minimal risk
-    NORMAL = "normal"      # Balanced safety and performance
-    RELAXED = "relaxed"    # Reduced safety for advanced users
+    STRICT = "strict"
+    NORMAL = "normal"
+    RELAXED = "relaxed"
 
 
 @dataclass
 class SafetyLimits:
     """Safety limits for drone operations"""
-    max_velocity: float = 2.0          # m/s
-    max_acceleration: float = 1.0      # m/s²
-    max_altitude: float = 30.0         # meters
-    min_altitude: float = 0.5          # meters
-    max_angular_velocity: float = 1.0  # rad/s
-    min_battery: float = 20.0          # percent
-    max_tilt_angle: float = 30.0       # degrees
-    geofence_radius: float = 100.0     # meters from origin
+    max_velocity: float = 2.0
+    max_acceleration: float = 1.0
+    max_altitude: float = 30.0
+    min_altitude: float = 0.5
+    max_angular_velocity: float = 1.0
+    min_battery: float = 20.0
+    max_tilt_angle: float = 30.0
+    geofence_radius: float = 100.0
 
 
 class CommandValidator:
@@ -61,17 +61,17 @@ class CommandValidator:
             
         command_lower = command.lower()
         
-        # Check for dangerous keywords
+
         for keyword in self.dangerous_keywords:
             if keyword in command_lower:
                 return False, f"Dangerous keyword detected: {keyword}"
                 
-        # Check for restricted areas
+
         for area in self.restricted_areas:
             if area in command_lower:
                 return False, f"Restricted area mentioned: {area}"
                 
-        # Check command length
+
         if len(command) > 200:
             return False, "Command too long"
             
@@ -85,7 +85,7 @@ class ActionValidator:
         self.safety_level = safety_level
         self.limits = SafetyLimits()
         
-        # Adjust limits based on safety level
+
         if safety_level == SafetyLevel.STRICT:
             self.limits.max_velocity *= 0.5
             self.limits.max_acceleration *= 0.5
@@ -113,7 +113,7 @@ class ActionValidator:
         constrained_action = action.copy()
         warnings = []
         
-        # Velocity constraints
+
         velocity = constrained_action[:3]
         velocity_magnitude = np.linalg.norm(velocity)
         
@@ -122,7 +122,7 @@ class ActionValidator:
             constrained_action[:3] *= scale_factor
             warnings.append(f"Velocity scaled down by {scale_factor:.2f}")
             
-        # Angular velocity constraints
+
         angular_velocity = constrained_action[3:]
         angular_velocity_magnitude = np.linalg.norm(angular_velocity)
         
@@ -131,7 +131,7 @@ class ActionValidator:
             constrained_action[3:] *= scale_factor
             warnings.append(f"Angular velocity scaled down by {scale_factor:.2f}")
             
-        # Context-aware validation
+
         if current_state:
             constrained_action, state_warnings = self._validate_with_state(
                 constrained_action, current_state
@@ -147,36 +147,36 @@ class ActionValidator:
         constrained_action = action.copy()
         warnings = []
         
-        # Altitude constraints
+
         if 'altitude' in state:
             altitude = state['altitude']
             vertical_velocity = constrained_action[2]
             
-            # Prevent flying too high
+
             if altitude > self.limits.max_altitude and vertical_velocity > 0:
                 constrained_action[2] = 0
                 warnings.append("Blocked upward motion: altitude limit reached")
                 
-            # Prevent flying too low
+
             if altitude < self.limits.min_altitude and vertical_velocity < 0:
                 constrained_action[2] = 0
                 warnings.append("Blocked downward motion: minimum altitude reached")
                 
-        # Battery constraints
+
         if 'battery' in state:
             battery = state['battery']
             if battery < self.limits.min_battery:
-                # Force landing if battery is critically low
+
                 constrained_action = np.array([0, 0, -0.5, 0, 0, 0])
                 warnings.append("Emergency landing: low battery")
                 
-        # Geofence constraints
+
         if 'position' in state:
             position = state['position']
             distance_from_origin = np.linalg.norm(position[:2])
             
             if distance_from_origin > self.limits.geofence_radius:
-                # Redirect towards origin
+
                 direction_to_origin = -position[:2] / np.linalg.norm(position[:2])
                 constrained_action[:2] = direction_to_origin * 0.5
                 warnings.append("Redirected: outside geofence")
@@ -203,18 +203,18 @@ class ConfidenceFilter:
         Returns:
             Tuple of (filtered_action, is_reliable)
         """
-        # Check overall confidence
+
         avg_confidence = np.mean(confidence)
         
         if avg_confidence < self.min_confidence:
-            # Return conservative action (hover)
+
             conservative_action = np.zeros_like(action)
             return conservative_action, False
             
-        # Scale action by confidence
+
         filtered_action = action * confidence
         
-        # Check individual dimension confidence
+
         low_confidence_dims = confidence < self.min_confidence
         if np.any(low_confidence_dims):
             filtered_action[low_confidence_dims] = 0
@@ -255,23 +255,23 @@ class SafetyMonitor:
             'blocked_reason': None
         }
         
-        # Emergency stop check
+
         if self.emergency_stop:
             result['blocked_reason'] = "Emergency stop activated"
             return result
             
-        # Validate command
+
         command_valid, command_reason = self.command_validator.validate_command(command)
         if not command_valid:
             result['blocked_reason'] = f"Command validation failed: {command_reason}"
             return result
             
-        # Filter by confidence
+
         filtered_action, is_reliable = self.confidence_filter.filter_action(action, confidence)
         if not is_reliable:
             result['warnings'].append("Low confidence action filtered")
             
-        # Validate action constraints
+
         safe_action, action_warnings = self.action_validator.validate_action(
             filtered_action, current_state
         )

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 Main entry point for Drone VLA system using VJEPA2
 """

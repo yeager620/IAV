@@ -6,7 +6,7 @@ from enum import Enum
 import threading
 import queue
 
-# Fix Python 3.13 compatibility issue with collections
+
 import sys
 if sys.version_info >= (3, 10):
     import collections.abc
@@ -33,9 +33,9 @@ class DroneState(Enum):
 @dataclass
 class DroneStatus:
     state: DroneState
-    position: Tuple[float, float, float]  # lat, lon, alt
-    velocity: Tuple[float, float, float]  # vx, vy, vz
-    attitude: Tuple[float, float, float]  # roll, pitch, yaw
+    position: Tuple[float, float, float]
+    velocity: Tuple[float, float, float]
+    attitude: Tuple[float, float, float]
     battery_level: float
     gps_fix: bool
     armed: bool
@@ -53,9 +53,9 @@ class DroneCommand:
 class SimulatedDrone:
     """Simulated drone for testing without hardware"""
     def __init__(self):
-        self.position = np.array([0.0, 0.0, 0.0])  # x, y, z in meters
+        self.position = np.array([0.0, 0.0, 0.0])
         self.velocity = np.array([0.0, 0.0, 0.0])
-        self.attitude = np.array([0.0, 0.0, 0.0])  # roll, pitch, yaw
+        self.attitude = np.array([0.0, 0.0, 0.0])
         self.armed = False
         self.mode = "STABILIZE"
         self.battery_level = 100.0
@@ -63,27 +63,27 @@ class SimulatedDrone:
         
     def update_physics(self, dt: float, control_input: np.ndarray):
         """Simple physics simulation"""
-        # Extract relevant components from 6DOF control input
+
         if len(control_input) >= 6:
-            linear_accel = control_input[:3] * 2.0  # [vx, vy, vz] acceleration
-            angular_accel = control_input[3:] * 1.0  # [roll, pitch, yaw] rates
+            linear_accel = control_input[:3] * 2.0
+            angular_accel = control_input[3:] * 1.0
         else:
             linear_accel = np.zeros(3)
             angular_accel = np.zeros(3)
         
-        # Update velocity
+
         self.velocity += linear_accel * dt
         
-        # Apply drag
+
         self.velocity *= 0.95
         
-        # Update position
+
         self.position += self.velocity * dt
         
-        # Update attitude (simplified)
+
         self.attitude += angular_accel * dt
         
-        # Battery drain
+
         self.battery_level -= 0.01 * dt
         
     def get_status(self) -> DroneStatus:
@@ -115,12 +115,12 @@ class DroneController:
         self.control_thread = None
         self.is_running = False
         
-        # Safety limits
-        self.max_velocity = 5.0  # m/s
-        self.max_altitude = 50.0  # meters
-        self.min_battery = 20.0  # percent
+
+        self.max_velocity = 5.0
+        self.max_altitude = 50.0
+        self.min_battery = 20.0
         
-        # Emergency stop flag
+
         self.emergency_stop = False
         
     def connect(self) -> bool:
@@ -174,28 +174,28 @@ class DroneController:
             current_time = time.time()
             dt = current_time - last_time
             
-            # Process commands
+
             self._process_commands()
             
-            # Update simulation if in simulation mode
+
             if self.simulation_mode and self.simulated_drone:
-                # Get current control input (simplified)
-                control_input = np.zeros(6)  # [vx, vy, vz, roll_rate, pitch_rate, yaw_rate]
+
+                control_input = np.zeros(6)
                 self.simulated_drone.update_physics(dt, control_input)
                 
-            # Update status history
+
             status = self.get_status()
             self.status_history.append(status)
             
-            # Keep only recent history
+
             if len(self.status_history) > 100:
                 self.status_history.pop(0)
                 
-            # Check safety conditions
+
             self._check_safety()
             
             last_time = current_time
-            time.sleep(0.1)  # 10Hz control loop
+            time.sleep(0.1)
             
     def _process_commands(self):
         """Process commands from queue"""
@@ -255,7 +255,7 @@ class DroneController:
         vy = params.get("vy", 0.0)
         vz = params.get("vz", 0.0)
         
-        # Apply safety limits
+
         vx = np.clip(vx, -self.max_velocity, self.max_velocity)
         vy = np.clip(vy, -self.max_velocity, self.max_velocity)
         vz = np.clip(vz, -self.max_velocity, self.max_velocity)
@@ -264,7 +264,7 @@ class DroneController:
             control_input = np.array([vx, vy, vz, 0, 0, 0])
             self.simulated_drone.update_physics(0.1, control_input)
         else:
-            # Send velocity command to real drone
+
             msg = self.vehicle.message_factory.set_position_target_local_ned_encode(
                 0, 0, 0, mavutil.mavlink.MAV_FRAME_LOCAL_NED,
                 0b0000111111000111, 0, 0, 0, vx, vy, vz, 0, 0, 0, 0, 0
@@ -279,7 +279,7 @@ class DroneController:
             control_input = np.array([0, 0, 0, 0, 0, yaw_rate])
             self.simulated_drone.update_physics(0.1, control_input)
         else:
-            # Send yaw rate command
+
             msg = self.vehicle.message_factory.set_position_target_local_ned_encode(
                 0, 0, 0, mavutil.mavlink.MAV_FRAME_LOCAL_NED,
                 0b0000111111111000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, yaw_rate
@@ -314,12 +314,12 @@ class DroneController:
         """Check safety conditions"""
         status = self.get_status()
         
-        # Check battery level
+
         if status.battery_level < self.min_battery:
             print("Low battery - initiating emergency landing")
             self.add_command("land", {})
             
-        # Check altitude
+
         if status.position[2] > self.max_altitude:
             print("Maximum altitude exceeded - stopping ascent")
             self.add_command("move", {"vx": 0, "vy": 0, "vz": -1})
@@ -371,16 +371,16 @@ class DroneController:
         
     def execute_action_vector(self, action: np.ndarray):
         """Execute action vector from neural network"""
-        # Action vector: [vx, vy, vz, roll_rate, pitch_rate, yaw_rate]
+
         if len(action) != 6:
             raise ValueError("Action vector must have 6 elements")
             
-        # Convert to command
+
         params = {
             "vx": float(action[0]),
             "vy": float(action[1]),
             "vz": float(action[2]),
-            "yaw_rate": float(action[5])  # Only use yaw rate for now
+            "yaw_rate": float(action[5])
         }
         
         self.add_command("move", params)
