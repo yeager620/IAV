@@ -1,0 +1,65 @@
+{
+  "system": {
+    "control_frequency": 100,
+    "command_timeout": 5.0,
+    "model_path": "data/models/vla_model.mojo"
+  },
+  "mavlink": {
+    "connection": "/dev/ttyUSB0",
+    "baud_rate": 921600,
+    "heartbeat_frequency": 1,
+    "timeout": 10.0
+  },
+  "vision": {
+    "camera_id": 0,
+    "frame_width": 640,
+    "frame_height": 480,
+    "fps": 30,
+    "target_width": 224,
+    "target_height": 224,
+    "sequence_length": 16,
+    "buffer_size": 32
+  },
+  "language": {
+    "embedding_dim": 512,
+    "max_command_length": 100,
+    "vocab_size": 1000
+  },
+  "safety": {
+    "max_velocity": 5.0,
+    "max_angular_rate": 2.0,
+    "min_altitude": 0.5,
+    "max_altitude": 100.0,
+    "max_acceleration": 10.0,
+    "confidence_threshold": 0.3
+  },
+  "control": {
+    "arm_length": 0.225,
+    "thrust_to_torque_ratio": 0.05,
+    "motor_limits": [0.0, 1.0],
+    "control_gains": {
+      "thrust_gain": 0.3,
+      "roll_gain": 0.2,
+      "pitch_gain": 0.2,
+      "yaw_gain": 0.1
+    }
+  },
+  "performance": {
+    "max_inference_latency_ms": 50,
+    "max_control_latency_ms": 2,
+    "stats_window_size": 100,
+    "log_level": "INFO"
+  },
+  "hardware": {
+    "jetson": {
+      "ip": "192.168.1.100",
+      "username": "jetson",
+      "deploy_path": "/home/jetson/uav_system"
+    },
+    "raspberry_pi": {
+      "ip": "192.168.1.101", 
+      "username": "pi",
+      "deploy_path": "/home/pi/uav_system"
+    }
+  }
+}
