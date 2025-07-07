@@ -94,6 +94,117 @@ flowchart TD
     class MOJO_CORE,MOJO_UAV,CAM_BRIDGE,NET_BRIDGE mojo
 ```
 
+### Process Lifetime Diagram
+
+```mermaid
+gantt
+    title UAV System Process Lifecycle (Continuous Operation)
+    dateFormat X
+    axisFormat %s
+    
+    section System Initialization
+    Config Loading         :0, 1s
+    MAVLink Connection     :1s, 2s
+    Camera Initialization  :2s, 3s
+    Safety System Init     :3s, 4s
+    System Ready          :milestone, 4s
+    
+    section Continuous Processes
+    Main Control Loop (100Hz)    :active, main_ctrl, 4s, 120s
+    Camera Capture (30Hz)        :active, camera, 4s, 120s
+    Drone Control (10Hz)         :active, drone_ctrl, 4s, 120s
+    Safety Monitor (10Hz)        :active, safety, 4s, 120s
+    
+    section Event-Driven Processes
+    User Command Processing      :crit, cmd1, 10s, 12s
+    VLA Model Inference         :crit, vla1, 11s, 13s
+    Mission Planning            :crit, mission1, 13s, 15s
+    
+    section Autonomous Mode
+    Autonomous Loop (10Hz)      :active, auto_loop, 20s, 60s
+    Object Detection           :active, obj_detect, 20s, 60s
+    Action Generation          :active, action_gen, 20s, 60s
+    
+    section Emergency Scenarios
+    Emergency Detection        :crit, emergency1, 35s, 36s
+    Emergency Landing          :crit, landing1, 36s, 40s
+    System Recovery           :recovery1, 40s, 45s
+    
+    section Second Mission Cycle
+    User Command 2            :crit, cmd2, 70s, 72s
+    VLA Inference 2           :crit, vla2, 71s, 73s
+    Mission Execution 2       :crit, mission2, 73s, 80s
+    
+    section Continuous Operation
+    Background Monitoring     :active, monitor, 4s, 120s
+    Telemetry Logging        :active, telemetry, 4s, 120s
+    Health Checks            :active, health, 4s, 120s
+```
+
+### Process Interaction Timeline
+
+```mermaid
+sequenceDiagram
+    participant U as User/Environment
+    participant M as Main Process
+    participant C as Camera Thread
+    participant D as Drone Controller
+    participant A as Autonomous System
+    participant S as Safety Monitor
+    participant H as Hardware (MAVLink)
+    
+    Note over M: System Startup (t=0)
+    M->>C: Initialize Camera
+    M->>D: Initialize Drone Controller
+    M->>A: Initialize Autonomous System
+    M->>S: Initialize Safety Monitor
+    M->>H: Connect MAVLink
+    
+    Note over M: Continuous Operation Loop
+    
+    loop Every 33ms (30Hz)
+        C->>C: Capture Frame
+        C->>A: Send Frame to Vision Queue
+    end
+    
+    loop Every 10ms (100Hz)
+        M->>D: Process Control Commands
+        M->>S: Safety Validation
+        D->>H: Send Motor Commands
+        H->>D: Receive Telemetry
+    end
+    
+    loop Every 100ms (10Hz)
+        A->>A: Process Autonomous Loop
+        D->>D: Update Control State
+        S->>S: Monitor Safety Conditions
+    end
+    
+    Note over U: User Interaction Event
+    U->>M: Natural Language Command
+    M->>A: Route Command to Autonomous System
+    A->>A: VLA Model Inference (1-2s)
+    A->>S: Validate Actions
+    S->>A: Safety Approval/Rejection
+    A->>D: Execute Flight Commands
+    D->>H: Motor Control Signals
+    
+    Note over S: Emergency Scenario
+    S->>S: Detect Safety Violation
+    S->>A: Emergency Stop Signal
+    S->>D: Emergency Landing Command
+    D->>H: Emergency Motor Commands
+    A->>A: Transition to Emergency State
+    
+    Note over M: Recovery Process
+    M->>A: Reset Autonomous System
+    A->>S: Request Safety Clearance
+    S->>A: Safety System Ready
+    A->>M: System Ready for Commands
+    
+    Note over M: Continuous Loop Resumes
+```
+
 ### Core Components
 
 - **Mojo Core**: Performance-critical flight control, safety monitoring, and VLA inference
