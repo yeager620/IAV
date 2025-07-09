@@ -7,7 +7,7 @@ echo "Running UAV system tests with pixi..."
 
 # Run Python tests
 echo "Running Python component tests..."
-python -m pytest tests/ -v
+python3 -m pytest tests/ -v
 
 # Test main.py functionality  
 echo "Testing main.py functionality..."
