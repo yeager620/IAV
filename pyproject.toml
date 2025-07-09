@@ -34,9 +34,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# ML features (optional since we use Mojo for performance)
+# ML features (required for VLA model)
 ml = [
     "torch>=2.0.0",
+    "transformers>=4.52.0",
+    "huggingface-hub>=0.25.0",
     "torchvision>=0.15.0", 
     "transformers>=4.52.0",
     "ultralytics>=8.0.0",

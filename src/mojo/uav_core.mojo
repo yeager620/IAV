@@ -219,38 +219,38 @@ fn create_test_scenarios() -> List[ControlSIMD]:
 
 fn main():
     """Enhanced UAV control system test with SIMD optimizations"""
-    print("🚁 Enhanced UAV Control System Test")
+    print("Enhanced UAV Control System Test")
     print("=" * 50)
     
     # Test SIMD-optimized control processing
-    print("✓ Testing SIMD-optimized motor control:")
+    print("Testing SIMD-optimized motor control:")
     var motors_simd = process_uav_control_simd(1.0, 0.5, 2.0, 0.1, 5.0)
     print("  All motors SIMD:", motors_simd[0], motors_simd[1], motors_simd[2], motors_simd[3])
     print("  Motors valid:", validate_motor_outputs(motors_simd))
     
     # Compare with legacy implementation
-    print("\n✓ Comparing with legacy implementation:")
+    print("\nComparing with legacy implementation:")
     print("  Legacy M1:", process_uav_control_single(1.0, 0.5, 2.0, 0.1, 5.0, 1))
     print("  Legacy M2:", process_uav_control_single(1.0, 0.5, 2.0, 0.1, 5.0, 2))
     print("  Legacy M3:", process_uav_control_single(1.0, 0.5, 2.0, 0.1, 5.0, 3))
     print("  Legacy M4:", process_uav_control_single(1.0, 0.5, 2.0, 0.1, 5.0, 4))
     
     # Test safety clamping
-    print("\n✓ Testing safety limits:")
+    print("\nTesting safety limits:")
     var unsafe_input = ControlSIMD(10.0, 8.0, 12.0, 5.0)
     var safe_output = apply_safety_limits_simd(unsafe_input)
     print("  Unsafe input:", unsafe_input[0], unsafe_input[1], unsafe_input[2], unsafe_input[3])
     print("  Safe output:", safe_output[0], safe_output[1], safe_output[2], safe_output[3])
     
     # Test altitude constraints
-    print("\n✓ Testing altitude constraints:")
+    print("\nTesting altitude constraints:")
     var low_altitude_test = apply_altitude_constraint_simd(ControlSIMD(0.0, 0.0, -2.0, 0.0), 0.3)
     var high_altitude_test = apply_altitude_constraint_simd(ControlSIMD(0.0, 0.0, 3.0, 0.0), 150.0)
     print("  Low altitude constraint:", low_altitude_test[2])
     print("  High altitude constraint:", high_altitude_test[2])
     
     # Test motor mixing matrix
-    print("\n✓ Testing motor mixing matrix:")
+    print("\nTesting motor mixing matrix:")
     var mixer = MotorMixingMatrix()
     var test_controls = ControlSIMD(0.6, 0.1, 0.2, 0.05)
     var mixed_motors = mixer.compute_all_motors(test_controls)
@@ -258,7 +258,7 @@ fn main():
     print("  Mixed motors:", mixed_motors[0], mixed_motors[1], mixed_motors[2], mixed_motors[3])
     
     # Test batch processing
-    print("\n✓ Testing batch processing:")
+    print("\nTesting batch processing:")
     var test_scenarios = create_test_scenarios()
     var altitudes = List[Float32]()
     for i in range(len(test_scenarios)):
@@ -272,12 +272,12 @@ fn main():
         print("  Scenario", i + 1, "valid:", valid)
     
     # Performance benchmark
-    print("\n✓ Performance benchmark:")
+    print("\nPerformance benchmark:")
     var speedup = benchmark_motor_computation(1000)
     print("  SIMD speedup factor:", speedup, "x")
     
     # Test specific flight scenarios
-    print("\n✓ Flight scenario tests:")
+    print("\nFlight scenario tests:")
     
     # Takeoff
     var takeoff = process_uav_control_simd(0.0, 0.0, 2.0, 0.0, 1.0)
@@ -296,5 +296,5 @@ fn main():
     print("  Turn motors:", turn[0], turn[1], turn[2], turn[3])
     
     print("=" * 50)
-    print("🎯 Enhanced UAV control test completed!")
-    print("✨ SIMD optimizations and vectorized processing active!")
+    print("Enhanced UAV control test completed!")
+    print("SIMD optimizations and vectorized processing active!")

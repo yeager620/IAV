@@ -527,7 +527,7 @@ fn create_test_frame(width: Int, height: Int, pattern: String) -> FrameBuffer:
 
 fn main():
     """Enhanced camera bridge test with SIMD optimizations and buffer management"""
-    print("📸 Enhanced Mojo Camera Bridge Test")
+    print("Enhanced Mojo Camera Bridge Test")
     print("=" * 60)
     
     # Test enhanced camera configuration
@@ -538,7 +538,7 @@ fn main():
     config.buffer_count = 5
     config.enable_gpu = True
     
-    print("✓ Camera configuration:")
+    print("Camera configuration:")
     print("  ID:", config.camera_id)
     print("  Resolution:", config.width, "x", config.height)
     print("  FPS:", config.fps)
@@ -548,7 +548,7 @@ fn main():
     print("  Buffer size:", config.get_buffer_size(), "bytes")
     
     # Test enhanced frame buffer with statistics
-    print("\n✓ Testing enhanced frame buffer:")
+    print("\nTesting enhanced frame buffer:")
     var frame_buffer = FrameBuffer(640, 480, 3)
     var is_valid = frame_buffer.validate()
     print("  Frame buffer valid:", is_valid)
@@ -566,7 +566,7 @@ fn main():
     print("    Max:", stats["max"])
     
     # Test buffer pool
-    print("\n✓ Testing buffer pool:")
+    print("\nTesting buffer pool:")
     var pool = FrameBufferPool(320, 240, 3, 3)
     var buffer1 = pool.get_buffer()
     var buffer2 = pool.get_buffer()
@@ -575,7 +575,7 @@ fn main():
     print("  Buffer returned to pool")
     
     # Test camera bridge with enhanced features
-    print("\n✓ Testing enhanced camera bridge:")
+    print("\nTesting enhanced camera bridge:")
     var bridge = CameraBridge(config)
     print("  Bridge initialized")
     print("  Supported formats:", len(bridge.supported_formats))
@@ -587,7 +587,7 @@ fn main():
     print("    Drop rate:", metrics["drop_rate"])
     
     # Test SIMD-optimized image processing
-    print("\n✓ Testing SIMD-optimized processing:")
+    print("\nTesting SIMD-optimized processing:")
     
     # Create test frames with different patterns
     var gradient_frame = create_test_frame(320, 240, "gradient")
@@ -618,14 +618,14 @@ fn main():
     print("    First few features:", features[0], features[1], features[2])
     
     # Performance benchmark
-    print("\n✓ Performance benchmarking:")
+    print("\nPerformance benchmarking:")
     var benchmark_results = benchmark_image_processing(gradient_frame, 100)
     print("  Preprocessing time:", benchmark_results["preprocessing_ns"], "ns")
     print("  Statistics time:", benchmark_results["statistics_ns"], "ns")
     print("  Feature extraction time:", benchmark_results["features_ns"], "ns")
     
     # Test frame quality assessment
-    print("\n✓ Frame quality assessment:")
+    print("\nFrame quality assessment:")
     var gradient_stats = gradient_frame.compute_statistics()
     var checkerboard_stats = checkerboard_frame.compute_statistics()
     var noise_stats = noise_frame.compute_statistics()
@@ -638,7 +638,7 @@ fn main():
     print("    Mean:", noise_stats["mean"], "Std:", noise_stats["std"])
     
     # Test motion detection between different patterns
-    print("\n✓ Motion detection tests:")
+    print("\nMotion detection tests:")
     var grad_to_check = detect_motion_simd(gradient_frame, checkerboard_frame)
     var grad_to_noise = detect_motion_simd(gradient_frame, noise_frame)
     var check_to_noise = detect_motion_simd(checkerboard_frame, noise_frame)
@@ -648,5 +648,5 @@ fn main():
     print("  Checkerboard -> Noise motion:", check_to_noise)
     
     print("=" * 60)
-    print("🎯 Enhanced camera bridge test completed!")
+    print("Enhanced camera bridge test completed!")
     print("✨ SIMD optimizations, buffer management, and performance tracking active!")

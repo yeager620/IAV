@@ -148,16 +148,28 @@ class ImageProcessor:
         
     def preprocess_frame(self, frame: np.ndarray, normalize: bool = True) -> torch.Tensor:
         """Preprocess frame for neural network input"""
-
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        
-
-        if normalize:
-            tensor = self.transforms(rgb_frame)
-        else:
-            tensor = self.viz_transforms(rgb_frame)
+        try:
+            # Use Mojo bridge for high-performance preprocessing
+            from ..python.mojo_bridge import mojo_camera_process
             
-        return tensor
+            # Apply Mojo preprocessing if available
+            processed_frame = mojo_camera_process(frame)
+            
+            # Convert to RGB
+            rgb_frame = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
+            
+            if normalize:
+                tensor = self.transforms(rgb_frame)
+            else:
+                tensor = self.viz_transforms(rgb_frame)
+                
+            return tensor
+        except Exception as e:
+            logger.error(f"Frame preprocessing failed: {e}")
+            # Fallback to basic processing
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            tensor = self.transforms(rgb_frame) if normalize else self.viz_transforms(rgb_frame)
+            return tensor
         
     def batch_preprocess(self, frames: List[np.ndarray], normalize: bool = True) -> torch.Tensor:
         """Preprocess multiple frames into batch"""

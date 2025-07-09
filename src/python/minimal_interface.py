@@ -260,37 +260,16 @@ class SystemOrchestrator:
     
     def _call_mojo_control(self, vx: float, vy: float, vz: float, wz: float, altitude: float) -> np.ndarray:
         """Call Mojo control processing directly"""
-        # Simplified Python fallback - in production this would call actual Mojo
-        # Apply safety limits
-        max_velocity = 5.0
-        max_angular = 2.0
+        from .mojo_bridge import mojo_drone_control
         
-        safe_vx = max(-max_velocity, min(max_velocity, vx))
-        safe_vy = max(-max_velocity, min(max_velocity, vy))
-        safe_vz = max(-max_velocity, min(max_velocity, vz))
-        safe_wz = max(-max_angular, min(max_angular, wz))
-        
-        # Apply altitude constraints
-        if altitude <= 0.5 and safe_vz < 0:
-            safe_vz = 0.0
-        elif altitude >= 100.0 and safe_vz > 0:
-            safe_vz = 0.0
-        
-        # Convert to control signals
-        thrust = 0.5 + safe_vz * 0.3
-        roll = safe_vy * 0.2
-        pitch = safe_vx * 0.2
-        yaw = safe_wz * 0.1
-        
-        # Compute motor commands
-        motor_commands = np.array([
-            max(0.0, min(1.0, thrust + roll + pitch - yaw)),  # Front-left
-            max(0.0, min(1.0, thrust - roll + pitch + yaw)),  # Front-right
-            max(0.0, min(1.0, thrust - roll - pitch - yaw)),  # Rear-right
-            max(0.0, min(1.0, thrust + roll - pitch + yaw))   # Rear-left
-        ], dtype=np.float32)
-        
-        return motor_commands
+        # Call through Mojo bridge with 6DOF control
+        return mojo_drone_control(
+            vx, vy, vz, 
+            0.0,  # roll_rate - could be derived from vy
+            0.0,  # pitch_rate - could be derived from vx
+            wz,   # yaw_rate
+            altitude
+        )
 
     def set_command(self, command: str):
         """Set current command"""

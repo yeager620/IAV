@@ -317,30 +317,30 @@ fn add_noise_to_command(cmd: ControlVector, noise_level: Float64) -> ControlVect
     )
 
 fn main():
-    print("🚁 Enhanced Mojo Drone Control System Test")
+    print("Enhanced Mojo Drone Control System Test")
     print("=" * 60)
     
     var drone = DroneController()
     
     # Test arming and metrics
     var armed = drone.arm()
-    print("✓ Drone armed:", armed)
+    print("Drone armed:", armed)
     
     # Test SIMD-optimized safe command
     var safe_cmd = ControlVector(1.0, 0.5, 0.2, 0.1)
     var executed = drone.execute_command(safe_cmd)
-    print("✓ Safe command executed:", executed)
+    print("Safe command executed:", executed)
     print("  Command magnitude:", safe_cmd.magnitude())
     
     # Test SIMD safety check with unsafe command
     var unsafe_cmd = ControlVector(20.0, 0.0, 0.0, 0.0)
     var is_safe = unsafe_cmd.is_safe()
-    print("✓ Unsafe command safety check:", is_safe)
+    print("Unsafe command safety check:", is_safe)
     
     # Test advanced vector operations
     var vec1 = Vector3(3.0, 4.0, 0.0)
     var vec2 = Vector3(1.0, 0.0, 1.0)
-    print("✓ Vector operations:")
+    print("Vector operations:")
     print("  Magnitude:", vec1.magnitude())
     print("  Normalized:", vec1.normalize().magnitude())
     print("  Dot product:", vec1.dot(vec2))
@@ -351,18 +351,18 @@ fn main():
     var start = Vector3(0.0, 0.0, 0.0)
     var target = Vector3(10.0, 5.0, 2.0)
     var nav_cmd = waypoint_navigation(start, target, 2.0)
-    print("✓ Enhanced navigation:")
+    print("Enhanced navigation:")
     print("  Velocity:", nav_cmd.vx, nav_cmd.vy, nav_cmd.vz)
     print("  Yaw command:", nav_cmd.yaw)
     
     # Test circular path generation
     var circle_cmd = circular_path(Vector3(0.0, 0.0, 5.0), 3.0, 0.5, 1.0)
-    print("✓ Circular path generation:")
+    print("Circular path generation:")
     print("  Velocity:", circle_cmd.vx, circle_cmd.vy)
     
     # Test orbit command
     var orbit_cmd = orbit_target(Vector3(5.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0), 3.0, 0.2)
-    print("✓ Orbit command:")
+    print("Orbit command:")
     print("  Velocity:", orbit_cmd.vx, orbit_cmd.vy)
     
     # Test batch safety processing
@@ -372,32 +372,32 @@ fn main():
     test_commands.append(ControlVector(15.0, 0.0, 0.0, 0.0))  # Unsafe
     
     var safety_results = batch_safety_check(test_commands)
-    print("✓ Batch safety check results:", len(safety_results))
+    print("Batch safety check results:", len(safety_results))
     for i in range(len(safety_results)):
         print("  Command", i + 1, "safe:", safety_results[i])
     
     # Test performance metrics
     var metrics = drone.get_performance_metrics()
-    print("✓ Performance metrics:")
+    print("Performance metrics:")
     print("  Commands executed:", metrics["commands_executed"])
     print("  Safety violations:", metrics["safety_violations"])
     
     # Test constraint application
     var constrained = unsafe_cmd.constrain_to_limits(5.0, 2.0)
-    print("✓ Constraint application:")
+    print("Constraint application:")
     print("  Original unsafe:", unsafe_cmd.vx, unsafe_cmd.vy, unsafe_cmd.vz)
     print("  Constrained:", constrained.vx, constrained.vy, constrained.vz)
     
     # Test noise addition for simulation
     var noisy_cmd = add_noise_to_command(safe_cmd, 0.1)
-    print("✓ Simulation noise:")
+    print("Simulation noise:")
     print("  Original:", safe_cmd.vx, safe_cmd.vy, safe_cmd.vz)
     print("  With noise:", noisy_cmd.vx, noisy_cmd.vy, noisy_cmd.vz)
     
     # Performance benchmark
     var benchmark_time = benchmark_navigation_performance()
-    print("✓ Navigation benchmark:", benchmark_time, "ns")
+    print("Navigation benchmark:", benchmark_time, "ns")
     
     print("=" * 60)
-    print("🎯 Enhanced system test completed!")
-    print("✨ SIMD optimizations, advanced math, and stdlib features active!")
+    print("Enhanced system test completed!")
+    print("SIMD optimizations, advanced math, and stdlib features active!")
