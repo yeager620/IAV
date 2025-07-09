@@ -1,6 +1,4 @@
-# IAV 
-
-Building an intelligent, robust, and lightweight aerial vehicle with the ability to plan and execute missions and interact with environment through a flexible set of actuators and end-affectors
+# IAV: Intelligent Aerial Vehicle
 
 ## Project Goals 
 
@@ -19,64 +17,59 @@ Building an intelligent, robust, and lightweight aerial vehicle with the ability
 - **Ability to iterate, prototype, and test quickly**
 - **Precise and correct program specifications:** 
 
-## Current Architecture
-
-```
-Hardware I/O (Python) ; Mojo Core ; Hardware I/O (Python)
-  MAVLink              UAV System      Motor Commands
-  Camera               VLA + Safety    
-  Commands             + Control       
-```
-
 ### System Components Flowchart
 
 ```mermaid
 flowchart TD
-    %% Input Layer
-    CAM[Camera System<br/>YOLOv8 Object Detection]
+    %% Input Layer (Python)
+    CAM[Camera System<br/>OpenCV + YOLOv8]
     CMD[Natural Language<br/>Commands]
     MAV[MAVLink Interface<br/>Flight Controller]
     
-    %% AI/ML Layer
-    VLA[VLA Model<br/>Vision-Language-Action<br/>VJEPA2 Neural Network]
+    %% AI/ML Layer (Python)
+    VLA[VLA Model<br/>V-JEPA2 Vision-Language-Action<br/>PyTorch/ONNX]
     
-    %% Processing Layer
+    %% Processing Layer (Python Orchestration)
     VISION[Vision System<br/>Frame Processing<br/>Object Actions]
-    SAFETY[Safety Monitor<br/>Command Validation<br/>Constraint Enforcement]
+    SAFETY_PY[Safety Monitor<br/>High-level Validation]
     AUTON[Autonomous System<br/>Mission Planning<br/>State Management]
     
-    %% Control Layer
-    CTRL[Flight Controller<br/>DroneController Class<br/>6DOF Control]
-    MOJO_CORE[Mojo Core<br/>Performance-Critical<br/>Control Logic]
-    MOJO_UAV[UAV Core Functions<br/>Motor Mixing<br/>Control Allocation]
+    %% Performance Layer (Mojo)
+    SAFETY_MOJO[Safety Validator<br/>Real-time SIMD Validation]
+    CTRL_MOJO[Control System<br/>PID Controllers<br/>Quaternion Math]
+    VISION_MOJO[Vision Pipeline<br/>SIMD Image Processing]
     
-    %% Output Layer
-    MOTORS[Motor Commands<br/>Quadcopter Control]
+    %% Hardware Interface (Python)
+    UNIFIED[Unified Drone Controller<br/>DroneKit + MAVLink]
+    MOTORS[Motor Commands<br/>Flight Controller]
     
-    %% High-Performance Bridges
-    CAM_BRIDGE[Camera Bridge<br/>Mojo]
-    NET_BRIDGE[Network Bridge<br/>Mojo]
+    %% High-Performance Bridges (Mojo)
+    CAM_BRIDGE[Camera Bridge<br/>Mojo SIMD Processing]
+    NET_BRIDGE[Network Bridge<br/>Mojo MAVLink Interface]
     
-    %% Data Flow
+    %% Data Flow - Input Processing
     CAM --> CAM_BRIDGE
-    CAM_BRIDGE --> VISION
+    CAM_BRIDGE --> VISION_MOJO
     CMD --> VLA
     VISION --> VLA
     VLA --> AUTON
-    AUTON --> SAFETY
-    SAFETY --> CTRL
-    CTRL --> MOJO_CORE
-    MOJO_CORE --> MOJO_UAV
-    MOJO_UAV --> MOTORS
     
+    %% Data Flow - Safety and Control
+    AUTON --> SAFETY_PY
+    SAFETY_PY --> SAFETY_MOJO
+    SAFETY_MOJO --> CTRL_MOJO
+    CTRL_MOJO --> UNIFIED
+    UNIFIED --> MOTORS
+    
+    %% Data Flow - Telemetry
     MAV --> NET_BRIDGE
-    NET_BRIDGE --> CTRL
-    CTRL --> NET_BRIDGE
+    NET_BRIDGE --> UNIFIED
+    UNIFIED --> NET_BRIDGE
     NET_BRIDGE --> MAV
     
-    %% Safety Override
-    SAFETY -.-> MOTORS
-    SAFETY -.-> MAV
+    %% Safety Override Paths
+    SAFETY_MOJO -.-> UNIFIED
+    SAFETY_PY -.-> MOTORS
     
     %% Styling
     classDef input fill:#e1f5fe
@@ -88,10 +81,10 @@ flowchart TD
     
     class CAM,CMD,MAV input
     class VLA ai
-    class VISION,SAFETY,AUTON processing
-    class CTRL control
+    class VISION,SAFETY_PY,AUTON processing
+    class UNIFIED control
     class MOTORS output
-    class MOJO_CORE,MOJO_UAV,CAM_BRIDGE,NET_BRIDGE mojo
+    class SAFETY_MOJO,CTRL_MOJO,VISION_MOJO,CAM_BRIDGE,NET_BRIDGE mojo
 ```
 
 ### Process Lifetime Diagram

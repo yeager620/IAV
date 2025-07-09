@@ -14,7 +14,15 @@ from enum import Enum
 from ..models.huggingface.vla_model import create_drone_vla_model
 from ..safety.validator import SafetyMonitor, SafetyLevel
 from ..vision.object_actions import VisionActionIntegrator
-from .drone_control import DroneController
+# Mojo performance modules (optional)
+try:
+    from ..mojo.safety_validator import create_safety_validator, validate_drone_state, validate_command_string
+    from ..mojo.vision_pipeline import create_vision_processor, process_frame_optimized
+    from ..mojo.control_system import create_control_system, compute_control_commands
+    MOJO_AVAILABLE = True
+except ImportError:
+    MOJO_AVAILABLE = False
+from .drone_control import UnifiedDroneController as DroneController
 from .camera import VisionSystem
 
 logger = logging.getLogger(__name__)
@@ -114,6 +122,18 @@ class AutonomousDroneSystem:
 
             logger.info("Initializing safety monitor...")
             self.safety_monitor = SafetyMonitor(SafetyLevel(self.safety_level))
+            
+            # Initialize Mojo components for high-performance processing
+            if MOJO_AVAILABLE:
+                logger.info("Initializing Mojo performance components...")
+                self.mojo_safety_validator = create_safety_validator()
+                self.mojo_vision_processor = create_vision_processor()
+                self.mojo_control_system = create_control_system()
+            else:
+                logger.warning("Mojo components not available, using Python fallback")
+                self.mojo_safety_validator = None
+                self.mojo_vision_processor = None
+                self.mojo_control_system = None
             
 
             logger.info("Initializing vision-action integrator...")

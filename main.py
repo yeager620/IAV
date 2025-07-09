@@ -14,7 +14,11 @@ from pathlib import Path
 # Add src to path
 sys.path.append(str(Path(__file__).parent / "src" / "python"))
 
-from minimal_interface import SystemOrchestrator
+try:
+    from minimal_interface import SystemOrchestrator
+except ImportError:
+    # Fallback to unified system
+    from src.core.autonomous_system import AutonomousDroneSystem as SystemOrchestrator
 
 def setup_logging(level: str = "INFO"):
     """Setup logging"""

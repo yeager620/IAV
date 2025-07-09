@@ -1,7 +1,7 @@
 [project]
 name = "drone-vla"
 authors = ["Evan Yeager <yeager@berkeley.edu>"]
-channels = ["https://conda.modular.com/max-nightly", "https://conda.modular.com/max", "conda-forge"]
+channels = ["https://conda.modular.com/max", "conda-forge"]
 platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
 description = "Vision-Language-Action system for autonomous drone control"
@@ -9,20 +9,24 @@ description = "Vision-Language-Action system for autonomous drone control"
 [tasks]
 # Build tasks
 build = "bash scripts/build.sh"
+build-mojo = "mojo build src/mojo/ --output build/mojo_modules"
+build-max = "max build src/models/max/ --output build/max_models"
 test = "bash scripts/test.sh"
+test-mojo = "mojo test tests/mojo/"
 dev = "python main.py --simulation"
 
 # Development tasks  
 format = "ruff format ."
 lint = "ruff check ."
 type-check = "mypy src/"
+compile-mojo = "mojo package src/mojo/ --output build/mojo_package.mojopkg"
 
 [dependencies]
-# Mojo/MAX
-max = ">=25.5.0.dev2025070705,<26"
+# Mojo/MAX - Use compatible stable version
+max = ">=25.3.0,<25.5"
 
-# Python core
-python = ">=3.13"
+# Python core - Use 3.12 for better compatibility with dronekit
+python = ">=3.12,<3.13"
 numpy = ">=1.24.0"
 opencv = ">=4.8.0"
 
@@ -49,3 +53,6 @@ ultralytics = ">=8.0.0"
 sentence-transformers = ">=2.2.0"
 huggingface-hub = ">=0.25.0"
 accelerate = ">=0.20.0"
+onnx = ">=1.17.0"
+onnxruntime = ">=1.20.0"
+# Note: modular package removed due to version conflicts with MAX platform

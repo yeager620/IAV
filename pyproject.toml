@@ -6,7 +6,7 @@ authors = [
     {name = "Evan Yeager", email = "yeager@berkeley.edu"}
 ]
 license = {text = "MIT"}
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 keywords = ["drone", "robotics", "vision-language-action", "autonomous", "uav"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -14,7 +14,7 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 readme = "README.md"
@@ -37,14 +37,14 @@ dependencies = [
 # ML features (required for VLA model)
 ml = [
     "torch>=2.0.0",
-    "transformers>=4.52.0",
-    "huggingface-hub>=0.25.0",
     "torchvision>=0.15.0", 
     "transformers>=4.52.0",
+    "huggingface-hub>=0.25.0",
     "ultralytics>=8.0.0",
     "sentence-transformers>=2.2.0",
     "accelerate>=0.20.0",
-    "huggingface-hub>=0.16.0",
+    "onnx>=1.17.0",
+    "onnxruntime>=1.20.0",
 ]
 
 # Development tools
